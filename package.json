@@ -10,6 +10,8 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@opentui/core": "^0.4.2"
+    "@openrouter/ai-sdk-provider": "^2.10.0",
+    "@opentui/core": "^0.4.2",
+    "ai": "^7.0.9"
   }
 }
