@@ -3,6 +3,9 @@ import { apod_tools } from "./apod_tool";
 import { neo_tools } from "./neo_tool";
 import { donki_tools } from "./donki_tool";
 import { techtransfer_tools } from "./techtransfer_tool";
+import { eonet_tools } from "./eonet_tool";
+import { epic_tools } from "./epic_tool";
+import { imagery_tools } from "./imagery_tool";
 import { web_tools } from "./web_tool";
 
 
@@ -13,5 +16,8 @@ export const tools = {
     neo_tools,
     donki_tools,
     techtransfer_tools,
+    eonet_tools,
+    epic_tools,
+    imagery_tools,
     web_tools,
 };

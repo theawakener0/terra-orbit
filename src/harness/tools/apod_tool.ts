@@ -21,7 +21,7 @@ export const apond_today = tool({
 export const apod_date = tool({
     description: "Get a specific date's APOD image to retrieve",
     inputSchema: z.object({
-        date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+        date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).describe("The date to retrieve"),
     }),
     execute: async ({ date }) => {
         const apod = await nasa.apod.byDate(date);
@@ -32,7 +32,7 @@ export const apod_date = tool({
 export const  apod_random = tool({
     description: "Get a certain number of random APOD images to retrieve",
     inputSchema: z.object({
-        number: z.number().min(1).max(10),
+        number: z.number().min(1).max(25).describe("The number of images to retrieve"),
     }),
     execute: async ({ number }) => {
         const apod = await nasa.apod.getRandom(number);
@@ -47,8 +47,8 @@ export const  apod_random = tool({
 export const apod_range = tool({
     description: "Get a range of APOD images to retrieve",
     inputSchema: z.object({
-        start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-        end: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+        start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).describe("Start date (YYYY-MM-DD)"),
+        end: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).describe("End date (YYYY-MM-DD)"),
     }),
     execute: async ({ start, end }) => {
         const apod = await nasa.apod.getRange(start, end);

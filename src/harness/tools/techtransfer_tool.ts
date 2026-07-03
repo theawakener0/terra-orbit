@@ -2,6 +2,10 @@ import { tool } from "ai";
 import { z } from "zod";
 import { nasa } from "./index";
 
+const format_techtransfer_tool = (result: string): string => {
+    return result;
+}
+
 export const patent = tool({
     description: "Search for a NASA tech transfer patent",
     inputSchema: z.object({
@@ -9,7 +13,14 @@ export const patent = tool({
     }),
     execute: async ({ query }) => {
         const result = await nasa.techtransfer.patent(query);
-        return result;
+        for (const s of result.results) {
+            return format_techtransfer_tool(
+               `Title: ${s.title}\n` +
+               `Patent: ${s.patentNumber}\n` +
+               `Status: ${s.status}\n` +
+               `Abstract: ${s.abstract}`
+            );
+        }
     },
 });
 
@@ -20,7 +31,13 @@ export const software = tool({
     }),
     execute: async ({ query }) => {
         const result = await nasa.techtransfer.software(query);
-        return result;
+        for (const s of result.results) {
+            return format_techtransfer_tool(
+                `Title: ${s.title}\n` +
+                `Software: ${s.softwareNumber}\n` +
+                `Abstract: ${s.abstract}`
+            );
+        }
     },
 });
 
@@ -31,7 +48,12 @@ export const spinoff = tool({
     }),
     execute: async ({ query }) => {
         const result = await nasa.techtransfer.spinoff(query);
-        return result;
+        for (const s of result.results) {
+            return format_techtransfer_tool(
+                `Title: ${s.title}\n` +
+                `Abstract: ${s.abstract}`
+            );
+        }
     },
 });
 

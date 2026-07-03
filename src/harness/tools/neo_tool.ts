@@ -11,29 +11,29 @@ export const neo_feed = tool({
     }),
     execute: async ({start_date, end_date}) => {
         const result = await nasa.neo.feed({ start_date, end_date })
-        return result
+        return JSON.stringify(result, null, 2);
     }
 });
 
 export const neo_lookup = tool({
     description: "Get near-earth object details",
     inputSchema: z.object({
-        id: z.string().regex(/^\d+$/),
+        id: z.string().regex(/^\d+$/).describe("The id of the object"),
     }),
     execute: async ({id}) => {
         const result = await nasa.neo.lookup(id)
-        return result
+        return JSON.stringify(result, null, 2);
     }
 });
 
 export const neo_browse = tool({
     description: "Browse near-earth object catalog",
     inputSchema: z.object({
-        page: z.number(),
+        page: z.number().min(1).max(25),
     }),
     execute: async ({page}) => {
         const result = await nasa.neo.browse(page)
-        return result
+        return JSON.stringify(result, null, 2);
     }
 });
 
