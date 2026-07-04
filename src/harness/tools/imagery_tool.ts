@@ -2,6 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import { nasa } from "./index";
 import type { ImageryItem } from "../../nasa";
+import { NasaApiError, RateLimitError } from "../../nasa";
 
 function formatSearchItem(item: ImageryItem): string {
   const data = item.data[0];
@@ -48,12 +49,22 @@ export const imagery_search = tool({
       .describe("End year"),
   }),
   execute: async (params) => {
-    const result = await nasa.imagery.search(params);
-    const items = result.collection.items;
-    if (items.length === 0) return "No results found.";
-    const total = result.collection.metadata.total_hits;
-    const formatted = items.map(formatSearchItem).join("\n===\n");
-    return `Total hits: ${total}\n\n${formatted}`;
+        try {
+            const result = await nasa.imagery.search(params);
+            const items = result.collection.items;
+            if (items.length === 0) return "No results found.";
+            const total = result.collection.metadata.total_hits;
+            const formatted = items.map(formatSearchItem).join("\n===\n");
+            return `Total hits: ${total}\n\n${formatted}`;
+        } catch (err) {
+            if (err instanceof RateLimitError) {
+                return `Rate limited — retry after ${err.retryAfter}s`
+            } else if (err instanceof NasaApiError) {
+                return `API error ${err.status}: ${err.message}`
+            } else {
+                return `Error: ${(err as Error).message}`
+            }
+        }
   },
 });
 
@@ -76,8 +87,18 @@ export const imagery_metadata = tool({
     nasa_id: z.string().describe("NASA ID of the asset"),
   }),
   execute: async ({ nasa_id }) => {
-    const result = await nasa.imagery.metadata(nasa_id);
-    return JSON.stringify(result, null, 2);
+        try {
+            const result = await nasa.imagery.metadata(nasa_id);
+            return JSON.stringify(result, null, 2);
+        } catch (err) {
+            if (err instanceof RateLimitError) {
+                return `Rate limited — retry after ${err.retryAfter}s`
+            } else if (err instanceof NasaApiError) {
+                return `API error ${err.status}: ${err.message}`
+            } else {
+                return `Error: ${(err as Error).message}`
+            }
+        }
   },
 });
 
@@ -87,14 +108,24 @@ export const imagery_captions = tool({
     nasa_id: z.string().describe("NASA ID of the asset"),
   }),
   execute: async ({ nasa_id }) => {
-    const result = await nasa.imagery.captions(nasa_id);
-    return result;
+        try {
+            const result = await nasa.imagery.captions(nasa_id);
+            return result;
+        } catch (err) {
+            if (err instanceof RateLimitError) {
+                return `Rate limited — retry after ${err.retryAfter}s`
+            } else if (err instanceof NasaApiError) {
+                return `API error ${err.status}: ${err.message}`
+            } else {
+                return `Error: ${(err as Error).message}`
+            }
+        }
   },
 });
 
 export const imagery_tools = {
-  imagery_search,
-  imagery_asset,
-  imagery_metadata,
-  imagery_captions,
+    imagery_search: imagery_search,
+    imagery_asset: imagery_asset,
+    imagery_metadata: imagery_metadata,
+    imagery_captions: imagery_captions,
 };

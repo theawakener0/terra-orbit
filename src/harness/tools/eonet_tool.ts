@@ -2,6 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import { nasa } from "./index";
 import type { EonetEvent, EonetCategory } from "../../nasa";
+import { NasaApiError, RateLimitError } from "../../nasa";
 
 function formatEvents(events: EonetEvent[]): string {
   return events
@@ -54,16 +55,26 @@ export const eonet_events = tool({
       .describe("End date (YYYY-MM-DD)"),
   }),
   execute: async ({ category, status, days, limit, source, startDate, endDate }) => {
-    const result = await nasa.eonet.events({
-      category,
-      status,
-      days,
-      limit,
-      source,
-      startDate,
-      endDate,
-    });
-    return formatEvents(result.events);
+        try {
+            const result = await nasa.eonet.events({
+                category,
+                status,
+                days,
+                limit,
+                source,
+                startDate,
+                endDate,
+            });
+            return formatEvents(result.events);
+        } catch (err) {
+            if (err instanceof RateLimitError) {
+                return `Rate limited — retry after ${err.retryAfter}s`
+            } else if (err instanceof NasaApiError) {
+                return `API error ${err.status}: ${err.message}`
+            } else {
+                return `Error: ${(err as Error).message}`
+            }
+        }
   },
 });
 
@@ -71,17 +82,27 @@ export const eonet_categories = tool({
   description: "List all EONET natural event categories",
   inputSchema: z.object({}),
   execute: async () => {
-    const result = await nasa.eonet.categories();
-    return result.categories
-      .map(
-        (c: EonetCategory) =>
-          `${c.id}: ${c.title} — ${c.description}`,
-      )
-      .join("\n");
+        try {
+            const result = await nasa.eonet.categories();
+            return result.categories
+              .map(
+                (c: EonetCategory) =>
+                  `${c.id}: ${c.title} — ${c.description}`,
+              )
+              .join("\n");
+        } catch (err) {
+            if (err instanceof RateLimitError) {
+                return `Rate limited — retry after ${err.retryAfter}s`
+            } else if (err instanceof NasaApiError) {
+                return `API error ${err.status}: ${err.message}`
+            } else {
+                return `Error: ${(err as Error).message}`
+            }
+        }
   },
 });
 
 export const eonet_tools = {
-  eonet_events,
-  eonet_categories,
+    eonet_events: eonet_events,
+    eonet_categories: eonet_categories,
 };

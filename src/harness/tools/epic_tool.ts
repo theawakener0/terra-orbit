@@ -2,6 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import { nasa } from "./index";
 import type { EpicImage } from "../../nasa";
+import { NasaApiError, RateLimitError } from "../../nasa";
 
 function formatEpicImages(images: EpicImage[]): string {
   return images
@@ -32,8 +33,18 @@ export const epic_latest = tool({
       .describe("Imagery type: natural color or enhanced"),
   }),
   execute: async ({ type }) => {
-    const result = await nasa.epic.getLatest(type);
-    return formatEpicImages(result);
+        try {
+            const result = await nasa.epic.getLatest(type);
+            return formatEpicImages(result);
+        } catch (err) {
+            if (err instanceof RateLimitError) {
+                return `Rate limited — retry after ${err.retryAfter}s`
+            } else if (err instanceof NasaApiError) {
+                return `API error ${err.status}: ${err.message}`
+            } else {
+                return `Error: ${(err as Error).message}`
+            }
+        }
   },
 });
 
@@ -51,9 +62,18 @@ export const epic_by_date = tool({
       .describe("Imagery type"),
   }),
   execute: async ({ date, type }) => {
-    const result = await nasa.epic.getByDate(type, date);
-    if (result.length === 0) return "No EPIC images found for this date.";
-    return formatEpicImages(result);
+        try {
+            const result = await nasa.epic.getByDate(type, date);
+            return formatEpicImages(result);
+        } catch (err) {
+            if (err instanceof RateLimitError) {
+                return `Rate limited — retry after ${err.retryAfter}s`
+            } else if (err instanceof NasaApiError) {
+                return `API error ${err.status}: ${err.message}`
+            } else {
+                return `Error: ${(err as Error).message}`
+            }
+        }
   },
 });
 
@@ -67,13 +87,23 @@ export const epic_available_dates = tool({
       .describe("Imagery type"),
   }),
   execute: async ({ type }) => {
-    const result = await nasa.epic.getAvailableDates(type);
-    return result.map((d) => d.date).join("\n");
+        try {
+            const result = await nasa.epic.getAvailableDates(type);
+            return result.map((d) => d.date).join("\n");
+        } catch (err) {
+            if (err instanceof RateLimitError) {
+                return `Rate limited — retry after ${err.retryAfter}s`
+            } else if (err instanceof NasaApiError) {
+                return `API error ${err.status}: ${err.message}`
+            } else {
+                return `Error: ${(err as Error).message}`
+            }
+        }
   },
 });
 
 export const epic_tools = {
-  epic_latest,
-  epic_by_date,
-  epic_available_dates,
+    epic_latest: epic_latest,
+    epic_by_date: epic_by_date,
+    epic_available_dates: epic_available_dates,
 };

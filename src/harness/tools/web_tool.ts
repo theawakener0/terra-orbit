@@ -73,8 +73,8 @@ export const web_answer = tool({
 });
 
 export const web_tools = {
-  web_search,
-  web_find_similar,
-  web_get_contents,
-  web_answer,
+    web_search: web_search,
+    web_find_similar: web_find_similar,
+    web_get_contents: web_get_contents,
+    web_answer: web_answer,
 };

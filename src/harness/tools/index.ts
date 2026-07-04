@@ -12,12 +12,12 @@ import { web_tools } from "./web_tool";
 export const nasa = new NasaClient(Bun.env.NASA_API_KEY!);
 
 export const tools = {
-    apod_tools,
-    neo_tools,
-    donki_tools,
-    techtransfer_tools,
-    eonet_tools,
-    epic_tools,
-    imagery_tools,
-    web_tools,
+    ...apod_tools,
+    ...neo_tools,
+    ...donki_tools,
+    ...techtransfer_tools,
+    ...eonet_tools,
+    ...epic_tools,
+    ...imagery_tools,
+    ...web_tools,
 };
