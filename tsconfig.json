@@ -5,8 +5,7 @@
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
-    "jsx": "preserve",
-    "jsxImportSource": "@opentui/solid",
+    "jsx": "react-jsx",
     "allowJs": true,
 
     // Bundler mode
