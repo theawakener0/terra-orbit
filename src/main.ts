@@ -1,0 +1,1 @@
+import { runAgentTUI } from "@ai-sdk/tui"; import { terra } from "./harness/agent"; await runAgentTUI({ title: 'Terra Agent', agent: terra as any, tools: 'auto-collapsed', reasoning: 'collapsed', responseStatistics: 'outputTokensPerSecond', contextSize: 200_000, });
