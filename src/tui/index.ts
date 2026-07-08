@@ -1,9 +1,15 @@
-import { createCliRenderer, InputRenderable, TextRenderable, BoxRenderable, InputRenderableEvents } from "@opentui/core";
+import { createCliRenderer, RGBA, SyntaxStyle, InputRenderable, TextRenderable, BoxRenderable, InputRenderableEvents, CodeRenderable } from "@opentui/core";
 import { NasaClient, NasaApiError, RateLimitError } from "../nasa";
+import { terra } from "../harness/agent";
 
 
 const nasa = new NasaClient(Bun.env.NASA_API_KEY!);
-const renderer = await createCliRenderer({ exitOnCtrlC: true });
+const renderer = await createCliRenderer({
+    exitOnCtrlC: true,
+    screenMode: "split-footer",
+    footerHeight: 20,
+    externalOutputMode: "capture-stdout",
+});
 
 const mainBox = new BoxRenderable(renderer, {
     flexDirection: "column",
@@ -48,7 +54,7 @@ const labelText = new TextRenderable(renderer, {
 const textInput = new InputRenderable(renderer, {
     id: "user-input",
     placeholder: "Type here...",
-    width: 20,
+    width: "100%",
     backgroundColor: "#222",
     focusedBackgroundColor: "#333",
     textColor: "#FFF",
@@ -67,6 +73,40 @@ function addOutput(content: string, fg = "#00FF00") {
         fg,
         marginTop: 1,
     }))
+}
+
+async function streamAIOutput(prompt: string) {
+    const surface = renderer.createScrollbackSurface({startOnNewLine: true})
+    const syntaxStyle = SyntaxStyle.fromStyles({
+          "markup.heading.1": { fg: RGBA.fromHex("#58A6FF"), bold: true },
+          "markup.list": { fg: RGBA.fromHex("#FF7B72") },
+          "markup.raw": { fg: RGBA.fromHex("#A5D6FF") },
+          default: { fg: RGBA.fromHex("#E6EDF3") },
+    })
+
+    const aiOutput = new CodeRenderable(surface.renderContext, {
+        id: "ai",
+        content: "",
+        filetype: "markdown",
+        width: "100%",
+        streaming: true,
+        syntaxStyle: syntaxStyle,
+    })
+
+    const stream = await terra.stream({
+        prompt: prompt,
+    })
+
+    for await (const part of stream.textStream) {
+        aiOutput.content += part
+
+        await surface.settle()
+
+        surface.commitRows(0, surface.height)
+    }
+
+    surface.destroy()
+
 }
 
 async function apod(args: string[]) {
@@ -565,66 +605,67 @@ async function imagery(args: string[]) {
 
 async function terraOrbit(input: string) {
     const [command, ...args] = input.split(/\s+/);
+    const prompt = input;
     switch (command) {
-        case "apod":
+        case "/apod":
             return apod(args);
-        case "neo":
+        case "/neo":
             return neo(args);
-        case "epic":
+        case "/epic":
             return epic(args);
-        case "donki":
+        case "/donki":
             return donki(args);
-        case "eonet":
+        case "/eonet":
             return eonet(args);
-        case "techtransfer":
+        case "/techtransfer":
             return techtransfer(args);
-        case "imagery":
+        case "/imagery":
             return imagery(args);
-        case "help":
+        case "/help":
             addOutput(
-                "apod                        today's picture\n" +
-                "apod <date>                 picture by date (YYYY-MM-DD)\n" +
-                "apod <n>                    n random pictures\n" +
-                "apod <start> <end>          date range\n" +
-                "apod help                   this help\n" +
+                "/apod                        today's picture\n" +
+                "/apod <date>                 picture by date (YYYY-MM-DD)\n" +
+                "/apod <n>                    n random pictures\n" +
+                "/apod <start> <end>          date range\n" +
+                "/apod help                   this help\n" +
                 "\n" +
-                "neo feed <start> <end>       asteroid feed for date range\n" +
-                "neo lookup <id>              asteroid details\n" +
-                "neo browse [page]            browse asteroid catalog\n" +
-                "neo help                     this help\n" +
+                "/neo feed <start> <end>       asteroid feed for date range\n" +
+                "/neo lookup <id>              asteroid details\n" +
+                "/neo browse [page]            browse asteroid catalog\n" +
+                "/neo help                     this help\n" +
                 "\n" +
-                "epic                          latest natural images\n" +
-                "epic enhanced                 latest enhanced images\n" +
-                "epic <type> <date>            images by date (YYYY-MM-DD)\n" +
-                "epic dates [type]             available dates\n" +
-                "epic help                     this help\n" +
+                "/epic                          latest natural images\n" +
+                "/epic enhanced                 latest enhanced images\n" +
+                "/epic <type> <date>            images by date (YYYY-MM-DD)\n" +
+                "/epic dates [type]             available dates\n" +
+                "/epic help                     this help\n" +
                 "\n" +
-                "donki cme [start] [end]             coronal mass ejections\n" +
-                "donki flares [start] [end]          solar flares\n" +
-                "donki storms [start] [end]          geomagnetic storms\n" +
-                "donki sep [start] [end]             solar energetic particles\n" +
-                "donki notifications [start] [end] [type]  space weather notifications\n" +
-                "donki help                          this help\n" +
+                "/donki cme [start] [end]             coronal mass ejections\n" +
+                "/donki flares [start] [end]          solar flares\n" +
+                "/donki storms [start] [end]          geomagnetic storms\n" +
+                "/donki sep [start] [end]             solar energetic particles\n" +
+                "/donki notifications [start] [end] [type]  space weather notifications\n" +
+                "/donki help                          this help\n" +
                 "\n" +
-                "eonet events [limit] [status] [category]  natural events\n" +
-                "eonet categories                          event categories\n" +
-                "eonet help                                this help\n" +
+                "/eonet events [limit] [status] [category]  natural events\n" +
+                "/eonet categories                          event categories\n" +
+                "/eonet help                                this help\n" +
                 "\n" +
-                "techtransfer patent <query>      search NASA patents\n" +
-                "techtransfer software <query>    search NASA software\n" +
-                "techtransfer spinoff <query>     search NASA spinoffs\n" +
-                "techtransfer help                this help\n" +
+                "/techtransfer patent <query>      search NASA patents\n" +
+                "/techtransfer software <query>    search NASA software\n" +
+                "/techtransfer spinoff <query>     search NASA spinoffs\n" +
+                "/techtransfer help                this help\n" +
                 "\n" +
-                "imagery search <query> [page_size]    search image library\n" +
-                "imagery asset <nasa_id>               get asset details\n" +
-                "imagery metadata <nasa_id>            get metadata\n" +
-                "imagery help                          this help\n" +
+                "/imagery search <query> [page_size]    search image library\n" +
+                "/imagery asset <nasa_id>               get asset details\n" +
+                "/imagery metadata <nasa_id>            get metadata\n" +
+                "/imagery help                          this help\n" +
                 "\n" +
-                "help                                this help"
+                "/help                                this help"
             );
             return;
         default:
-            addOutput(`Unknown command: ${command}. Available: apod, neo, epic, donki, eonet, techtransfer, imagery`, "#FF0000");
+            await streamAIOutput(prompt);
     }
 }
 
