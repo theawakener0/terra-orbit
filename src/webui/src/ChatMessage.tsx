@@ -6,11 +6,12 @@ import ToolCallCard from "./ToolCallCard";
 
 function getToolPart(part: Record<string, unknown>) {
   const type = part.type as string;
+  if (!type) return null;
   if (type === "dynamic-tool" || type.startsWith("tool-")) {
     return {
-      toolName: part.toolName as string,
-      state: part.state as "input-streaming" | "input-available" | "output-available" | "output-error",
-      input: part.input as Record<string, unknown>,
+      toolName: (part.toolName as string) || type.replace(/^tool-/, ""),
+      state: (part.state as "input-streaming" | "input-available" | "output-available" | "output-error") || "input-available",
+      input: (part.input as Record<string, unknown>) || {},
       output: part.output,
       errorText: part.errorText as string | undefined,
     };
@@ -25,7 +26,9 @@ export default function ChatMessage({ message }: { message: UIMessage }) {
         {message.role === "user" ? "you" : "Terra"}
       </div>
       <div className="message-content">
-        {message.parts.map((part, index) => {
+        {Array.isArray(message.parts) ? message.parts.map((part, index) => {
+          if (!part || !part.type) return null;
+
           if (part.type === "text") {
             return (
               <div key={index} className="text-part">
@@ -48,7 +51,7 @@ export default function ChatMessage({ message }: { message: UIMessage }) {
           }
 
           return null;
-        })}
+        }) : null}
       </div>
       <ResponseStats
         usage={(message.metadata as Record<string, unknown>)?.totalUsage as { totalTokens?: number } | undefined}

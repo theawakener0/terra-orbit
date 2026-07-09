@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import Header from "./src/Header";
 import ChatMessages from "./src/ChatMessages";
 import InputBar from "./src/InputBar";
+import ErrorBoundary from "./src/ErrorBoundary";
 
 export default function App() {
   const { messages, sendMessage, status, stop, error } = useChat({
@@ -23,7 +24,9 @@ export default function App() {
   return (
     <div className="app">
       <Header status={status} />
-      <ChatMessages messages={messages} streaming={isLoading} error={error} />
+      <ErrorBoundary>
+        <ChatMessages messages={messages} streaming={isLoading} error={error} />
+      </ErrorBoundary>
       <div ref={messagesEndRef} />
       <InputBar
         onSend={(text) => sendMessage({ text })}

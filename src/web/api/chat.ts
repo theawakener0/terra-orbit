@@ -4,10 +4,30 @@ import {
   toUIMessageStream,
   createUIMessageStreamResponse,
 } from "ai";
+import type { StreamPart } from "ai";
 import { hackclub, model } from "../../harness/config";
 import { tools } from "../../harness/tools";
 import { orbit } from "../../harness/subagents";
 import { context } from "../../harness/context";
+
+async function* errorSafe(
+  stream: AsyncIterable<StreamPart>
+): AsyncIterable<StreamPart> {
+  try {
+    for await (const part of stream) {
+      yield part;
+    }
+  } catch (error) {
+    const text =
+      error instanceof Error ? error.message : typeof error === "string" ? error : JSON.stringify(error);
+    yield { type: "error", error: text } as StreamPart;
+    yield {
+      type: "finish",
+      finishReason: "error",
+      usage: { promptTokens: 0, completionTokens: 0 },
+    } as StreamPart;
+  }
+}
 
 export async function handleChat(req: Request) {
   try {
@@ -32,7 +52,7 @@ export async function handleChat(req: Request) {
 
     return createUIMessageStreamResponse({
       stream: toUIMessageStream({
-        stream: result.stream,
+        stream: errorSafe(result.stream),
         sendReasoning: true,
         originalMessages: messages,
         messageMetadata: ({ part }) => {

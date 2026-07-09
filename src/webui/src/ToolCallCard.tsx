@@ -9,6 +9,7 @@ export interface ToolPart {
 }
 
 function formatName(name: string): string {
+  if (!name || typeof name !== "string") return "";
   return name
     .replace(/_/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());

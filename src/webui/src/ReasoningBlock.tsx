@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export default function ReasoningBlock({ text }: { text: string }) {
   const [open, setOpen] = useState(false);
+  const display = typeof text === "string" ? text : "";
 
   return (
     <div className="reasoning">
@@ -9,7 +10,7 @@ export default function ReasoningBlock({ text }: { text: string }) {
         <span className={`reasoning-arrow ${open ? "open" : ""}`}>▶</span>
         reasoning
       </div>
-      {open && <div className="reasoning-text">{text}</div>}
+      {open && <div className="reasoning-text">{display}</div>}
     </div>
   );
 }
