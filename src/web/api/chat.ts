@@ -10,23 +10,43 @@ import { tools } from "../../harness/tools";
 import { orbit } from "../../harness/subagents";
 import { context } from "../../harness/context";
 
-async function* errorSafe(
-  stream: AsyncIterable<StreamPart>
-): AsyncIterable<StreamPart> {
-  try {
-    for await (const part of stream) {
-      yield part;
-    }
-  } catch (error) {
-    const text =
-      error instanceof Error ? error.message : typeof error === "string" ? error : JSON.stringify(error);
-    yield { type: "error", error: text } as StreamPart;
-    yield {
-      type: "finish",
-      finishReason: "error",
-      usage: { promptTokens: 0, completionTokens: 0 },
-    } as StreamPart;
-  }
+function safeStream(stream: ReadableStream<StreamPart>): ReadableStream<StreamPart> {
+  const reader = stream.getReader();
+  let done = false;
+
+  return new ReadableStream({
+    async pull(controller) {
+      if (done) { controller.close(); return; }
+
+      try {
+        const result = await reader.read();
+        if (result.done) {
+          done = true;
+          controller.close();
+        } else {
+          controller.enqueue(result.value);
+        }
+      } catch (error) {
+        done = true;
+        const text =
+          error instanceof Error
+            ? error.message
+            : typeof error === "string"
+              ? error
+              : JSON.stringify(error);
+        controller.enqueue({ type: "error", error: text } as StreamPart);
+        controller.enqueue({
+          type: "finish",
+          finishReason: "error",
+          usage: { promptTokens: 0, completionTokens: 0 },
+        } as StreamPart);
+        controller.close();
+      }
+    },
+    cancel(reason) {
+      reader.cancel(reason);
+    },
+  });
 }
 
 export async function handleChat(req: Request) {
@@ -50,30 +70,32 @@ export async function handleChat(req: Request) {
       toolChoice: "auto",
     });
 
+    const uiStream = toUIMessageStream({
+      stream: safeStream(result.stream),
+      sendReasoning: true,
+      originalMessages: messages,
+      messageMetadata: ({ part }) => {
+        if (part.type === "finish") {
+          return {
+            totalUsage: part.totalUsage,
+            finishReason: part.finishReason,
+          };
+        }
+        return undefined;
+      },
+      onError: (error) => {
+        if (error instanceof Error) return error.message;
+        if (typeof error === "string") return error;
+        try {
+          return JSON.stringify(error);
+        } catch {
+          return "An error occurred";
+        }
+      },
+    });
+
     return createUIMessageStreamResponse({
-      stream: toUIMessageStream({
-        stream: errorSafe(result.stream),
-        sendReasoning: true,
-        originalMessages: messages,
-        messageMetadata: ({ part }) => {
-          if (part.type === "finish") {
-            return {
-              totalUsage: part.totalUsage,
-              finishReason: part.finishReason,
-            };
-          }
-          return undefined;
-        },
-        onError: (error) => {
-          if (error instanceof Error) return error.message;
-          if (typeof error === "string") return error;
-          try {
-            return JSON.stringify(error);
-          } catch {
-            return "An error occurred";
-          }
-        },
-      }),
+      stream: uiStream,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
