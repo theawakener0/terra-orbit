@@ -17,6 +17,7 @@
   --text-secondary: #888888;
   --text-muted: #444444;
   --brand: #0b3d91;
+  --brand-orbit: #e74c3c;
   --success: #22c55e;
   --error: #ef4444;
   --pending: #888888;
@@ -97,9 +98,16 @@ body::after {
   font-family: "Orbitron", monospace;
   font-size: 16px;
   font-weight: 700;
-  color: var(--brand);
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+.brand-terra {
+  color: var(--brand);
+}
+
+.brand-orbit {
+  color: var(--brand-orbit);
 }
 
 .header-status {

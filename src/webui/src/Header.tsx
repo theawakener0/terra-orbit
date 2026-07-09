@@ -10,7 +10,7 @@ export default function Header({ status }: { status: Status }) {
 
   return (
     <header className="header">
-      <span className="header-brand">TerraOrbit</span>
+      <span className="header-brand"><span className="brand-terra">Terra</span><span className="brand-orbit">Orbit</span></span>
       <span className={`header-status ${statusLabel}`}>{statusLabel}</span>
     </header>
   );
