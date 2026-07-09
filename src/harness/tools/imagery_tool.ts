@@ -74,10 +74,20 @@ export const imagery_asset = tool({
     nasa_id: z.string().describe("NASA ID of the asset"),
   }),
   execute: async ({ nasa_id }) => {
-    const result = await nasa.imagery.asset(nasa_id);
-    const items = result.collection.items;
-    if (items.length === 0) return "No assets found.";
-    return items.map((i) => i.href).join("\n");
+    try {
+      const result = await nasa.imagery.asset(nasa_id);
+      const items = result.collection.items;
+      if (items.length === 0) return "No assets found.";
+      return items.map((i) => i.href).join("\n");
+    } catch (err) {
+      if (err instanceof RateLimitError) {
+        return `Rate limited — retry after ${err.retryAfter}s`
+      } else if (err instanceof NasaApiError) {
+        return `API error ${err.status}: ${err.message}`
+      } else {
+        return `Error: ${(err as Error).message}`
+      }
+    }
   },
 });
 

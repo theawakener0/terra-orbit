@@ -294,7 +294,7 @@ async function epic(args: string[]) {
         }
 
         if (args[0] === "dates") {
-            const type = (args[1] as "natural" | "enhanced") ?? "natural"
+            const type: "natural" | "enhanced" = args[1] === "enhanced" ? "enhanced" : "natural"
             const dates = await nasa.epic.getAvailableDates(type)
             addOutput(dates.map(d => d.date).join("\n"))
             return

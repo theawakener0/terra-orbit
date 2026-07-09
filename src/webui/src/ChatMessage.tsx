@@ -4,14 +4,21 @@ import StepSeparator from "./StepSeparator";
 import ResponseStats from "./ResponseStats";
 import ToolCallCard from "./ToolCallCard";
 
-function getToolPart(part: Record<string, unknown>) {
-  const type = part.type as string;
-  if (!type) return null;
-  if (type === "dynamic-tool" || type.startsWith("tool-")) {
+interface ToolPartData {
+  toolName: string;
+  state: "input-streaming" | "input-available" | "output-available" | "output-error";
+  input: Record<string, unknown>;
+  output: unknown;
+  errorText?: string;
+}
+
+function isToolPart(part: Record<string, unknown>): ToolPartData | null {
+  const type = part.type;
+  if (type === "dynamic-tool" || (typeof type === "string" && type.startsWith("tool-"))) {
     return {
-      toolName: (part.toolName as string) || type.replace(/^tool-/, ""),
+      toolName: (part.toolName as string) || ((typeof type === "string" ? type.replace(/^tool-/, "") : "")),
       state: (part.state as "input-streaming" | "input-available" | "output-available" | "output-error") || "input-available",
-      input: (part.input as Record<string, unknown>) || {},
+      input: (part.input as Record<string, unknown>) ?? {},
       output: part.output,
       errorText: part.errorText as string | undefined,
     };
@@ -19,7 +26,20 @@ function getToolPart(part: Record<string, unknown>) {
   return null;
 }
 
+function getMessageUsage(
+  metadata: unknown,
+): { totalTokens?: number; finishReason?: string } | undefined {
+  if (!metadata || typeof metadata !== "object") return undefined;
+  const m = metadata as Record<string, unknown>;
+  const totalUsage = m.totalUsage as { totalTokens?: number } | undefined;
+  const finishReason = m.finishReason as string | undefined;
+  if (!totalUsage && !finishReason) return undefined;
+  return { ...totalUsage, finishReason };
+}
+
 export default function ChatMessage({ message }: { message: UIMessage }) {
+  const metadata = getMessageUsage(message.metadata);
+
   return (
     <div className={`message ${message.role}`}>
       <div className="message-label">
@@ -45,7 +65,7 @@ export default function ChatMessage({ message }: { message: UIMessage }) {
             return <StepSeparator key={index} />;
           }
 
-          const toolPart = getToolPart(part as unknown as Record<string, unknown>);
+          const toolPart = isToolPart(part as unknown as Record<string, unknown>);
           if (toolPart) {
             return <ToolCallCard key={index} part={toolPart} />;
           }
@@ -53,10 +73,12 @@ export default function ChatMessage({ message }: { message: UIMessage }) {
           return null;
         }) : null}
       </div>
-      <ResponseStats
-        usage={(message.metadata as Record<string, unknown>)?.totalUsage as { totalTokens?: number } | undefined}
-        finishReason={(message.metadata as Record<string, unknown>)?.finishReason as string | undefined}
-      />
+      {metadata && (
+        <ResponseStats
+          usage={metadata.totalTokens != null ? { totalTokens: metadata.totalTokens } : undefined}
+          finishReason={metadata.finishReason}
+        />
+      )}
     </div>
   );
 }

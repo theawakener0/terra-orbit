@@ -8,12 +8,10 @@ import { epic_tools } from "./tools/epic_tool";
 import { apod_tools } from "./tools/apod_tool";
 import { imagery_tools } from "./tools/imagery_tool";
 import {techtransfer_tools} from "./tools/techtransfer_tool";
-import { hackclub } from "./config";
-
-const model: string = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free";
+import { hackclub, subagentModel } from "./config";
 
 const helios = new ToolLoopAgent({
-    model: hackclub(model),
+    model: hackclub(subagentModel),
     instructions: "You are Helios a space weather expert, a solar physics expert, and a specialized subagent for querying, cross-referencing, and interpreting the multi-endpoint DONKI data into precise, actionable space weather forecasting to deliver advanced space weather intelligence",
     tools: {
        ...donki_tools 
@@ -21,7 +19,7 @@ const helios = new ToolLoopAgent({
 });
 
 const aegis = new ToolLoopAgent({
-    model: hackclub(model),
+    model: hackclub(subagentModel),
     instructions: "You are Aegis a planetary defence, an asteriod intelligence, and a specialized subagent for utilizing NASA NEO and live web intelligence to track, contextually scale (size comparisons/orbital mechanics), and proactively flag high-interest or hazardous near-Earth objects that actively flags high-risk near-Earth objects, translating raw orbital vectors and sizing data into intuitive threat assessments and physical scale comparisons",
     tools: {
         ...neo_tools,
@@ -30,7 +28,7 @@ const aegis = new ToolLoopAgent({
 });
 
 const gaia = new ToolLoopAgent({
-    model: hackclub(model),
+    model: hackclub(subagentModel),
     instructions: "You are Gaia an earth observatory, a disaster response, and specialized subagent for merging NASA EONET dynamic threat tracking with EPIC satellite imagery delivring instant, visually paired context on active wildfires, hurricanes, and volcanic eruptions in a single turn",
     tools: {
         ...eonet_tools,
@@ -39,7 +37,7 @@ const gaia = new ToolLoopAgent({
 });
 
 const chronos = new ToolLoopAgent({
-    model: hackclub(model),
+    model: hackclub(subagentModel),
     instructions: "You are Chronos a NASA imagery curator, an archivist, and  a specialized subagent integrating APOD, the NASA image library, and EPIC data into a singular visual ecosystem. Acts as a master storyteller, deep-diving into the cosmic history, engineering context, and structural beauty behind every image",
     tools: {
         ...apod_tools,
@@ -49,7 +47,7 @@ const chronos = new ToolLoopAgent({
 });
 
 const prometheus = new ToolLoopAgent({
-    model: hackclub(model),
+    model: hackclub(subagentModel),
     instructions: "You are Prometheus a NASA spinoffs, a tech transfer, and a specialized subagent trained to explore NASA's active patent portfolio, free open-source software catalog, and commercial spinoff history. Built to help developers, entrepreneurs, and makers find, license, and weaponize space-grade technology for Earth applications",
     tools: {
         ...techtransfer_tools,
@@ -58,7 +56,7 @@ const prometheus = new ToolLoopAgent({
 });
 
 const argus = new ToolLoopAgent({
-    model: hackclub(model),
+    model: hackclub(subagentModel),
     instructions: "You are Argus a deep web researcher, a data miner, and a specialized research subagent bypassing traditional keyword search to leverage Exa’s neural embeddings. Built to extract clean, token-efficient webpage highlights, parse full-text documents, and deliver highly objective, source-grounded synthesis when internal APIs lack coverage",
     tools: {
         ...web_tools

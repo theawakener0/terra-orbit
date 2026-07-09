@@ -105,8 +105,18 @@ export const donki_sep = tool({
   description: "Get solar energetic particles",
   inputSchema: dateRangeSchema,
   execute: async ({ start_date, end_date }) => {
-    const result = await nasa.donki.solarEnergeticParticles({ startDate: start_date, endDate: end_date })
-    return JSON.stringify(result, null, 2)
+    try {
+      const result = await nasa.donki.solarEnergeticParticles({ startDate: start_date, endDate: end_date })
+      return JSON.stringify(result, null, 2)
+    } catch (err) {
+      if (err instanceof RateLimitError) {
+        return `Rate limited — retry after ${err.retryAfter}s`
+      } else if (err instanceof NasaApiError) {
+        return `API error ${err.status}: ${err.message}`
+      } else {
+        return `Error: ${(err as Error).message}`
+      }
+    }
   }
 });
 

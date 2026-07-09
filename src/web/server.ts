@@ -27,7 +27,13 @@ export function startServer() {
       const filePath = url.pathname === "/" ? "/index.html" : url.pathname;
       const file = Bun.file(`${DIST}${filePath}`);
       if (await file.exists()) {
-        return new Response(file);
+        const ext = filePath.split(".").pop()?.toLowerCase();
+        const cacheMaxAge = ["js", "css", "png", "jpg", "jpeg", "gif", "svg", "ico", "woff2"].includes(ext ?? "")
+          ? 86400
+          : 0;
+        return new Response(file, {
+          headers: { "Cache-Control": `public, max-age=${cacheMaxAge}` },
+        });
       }
 
       const index = Bun.file(`${DIST}/index.html`);

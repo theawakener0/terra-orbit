@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState, useCallback, type ReactNode, type KeyboardEvent } from "react";
 
 export interface ToolPart {
   toolName: string;
@@ -67,10 +67,10 @@ export default function ToolCallCard({ part }: { part: ToolPart }) {
 
         {hasError && (
           <div className="tool-call-section">
-            <span className="tool-call-section-label" style={{ color: "var(--error)" }}>
+            <span className="tool-call-section-label tool-call-section-error">
               error
             </span>
-            <pre style={{ color: "var(--error)" }}>{part.errorText}</pre>
+            <pre className="tool-call-error">{part.errorText}</pre>
           </div>
         )}
       </div>
@@ -86,13 +86,21 @@ export default function ToolCallCard({ part }: { part: ToolPart }) {
 
   return (
     <div className="tool-call">
-      <div className="tool-call-header" onClick={() => setOpen(!open)}>
+      <div
+        className="tool-call-header"
+        role="button"
+        tabIndex={0}
+        onClick={() => setOpen(!open)}
+        onKeyDown={(e: KeyboardEvent) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(!open); } }}
+        aria-expanded={open}
+        aria-label={`${formatName(part.toolName)} tool call`}
+      >
         {part.state === "input-streaming" || part.state === "input-available" ? (
           <span className="tool-call-spinner" />
         ) : part.state === "output-available" ? (
-          <span style={{ color: "var(--success)" }}>✓</span>
+          <span className="tool-call-icon-success">✓</span>
         ) : (
-          <span style={{ color: "var(--error)" }}>✗</span>
+          <span className="tool-call-icon-error">✗</span>
         )}
         <span className="tool-call-name">{formatName(part.toolName)}</span>
         <span className={`tool-call-status ${stateClass}`}>{statusText()}</span>

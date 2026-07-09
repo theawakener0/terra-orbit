@@ -1,16 +1,17 @@
 import {
   streamText,
+  isStepCount,
   convertToModelMessages,
   toUIMessageStream,
   createUIMessageStreamResponse,
 } from "ai";
-import type { StreamPart } from "ai";
+
 import { hackclub, model } from "../../harness/config";
 import { tools } from "../../harness/tools";
 import { orbit } from "../../harness/subagents";
 import { context } from "../../harness/context";
 
-function safeStream(stream: ReadableStream<StreamPart>): ReadableStream<StreamPart> {
+function safeStream(stream: ReadableStream) {
   const reader = stream.getReader();
   let done = false;
 
@@ -34,12 +35,12 @@ function safeStream(stream: ReadableStream<StreamPart>): ReadableStream<StreamPa
             : typeof error === "string"
               ? error
               : JSON.stringify(error);
-        controller.enqueue({ type: "error", error: text } as StreamPart);
+        controller.enqueue({ type: "error", error: text });
         controller.enqueue({
           type: "finish",
           finishReason: "error",
           usage: { promptTokens: 0, completionTokens: 0 },
-        } as StreamPart);
+        });
         controller.close();
       }
     },
@@ -49,11 +50,26 @@ function safeStream(stream: ReadableStream<StreamPart>): ReadableStream<StreamPa
   });
 }
 
+function isValidMessages(body: unknown): body is { messages: Record<string, unknown>[] } {
+  if (!body || typeof body !== "object") return false;
+  const obj = body as Record<string, unknown>;
+  if (!Array.isArray(obj.messages)) return false;
+  return obj.messages.every(
+    (m: unknown) => m && typeof m === "object" && typeof (m as Record<string, unknown>).role === "string"
+  );
+}
+
 export async function handleChat(req: Request) {
   try {
-    const { messages } = await req.json();
+    const body = await req.json();
+    if (!isValidMessages(body)) {
+      return new Response(JSON.stringify({ error: "Invalid request: messages array required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
-    const sanitized = messages.map((m: Record<string, unknown>) => ({
+    const sanitized = body.messages.map((m: Record<string, unknown>) => ({
       ...m,
       parts: (m.parts as Record<string, unknown>[])?.filter(
         (p: Record<string, unknown>) => p.type !== "file"
@@ -63,9 +79,9 @@ export async function handleChat(req: Request) {
     const result = streamText({
       model: hackclub(model),
       instructions: context.terra,
-      messages: await convertToModelMessages(sanitized),
+      messages: await convertToModelMessages(sanitized as any),
       tools: { ...tools, ...orbit },
-      maxSteps: 100,
+      stopWhen: isStepCount(100),
       maxRetries: 10,
       toolChoice: "auto",
     });
@@ -73,7 +89,7 @@ export async function handleChat(req: Request) {
     const uiStream = toUIMessageStream({
       stream: safeStream(result.stream),
       sendReasoning: true,
-      originalMessages: messages,
+      originalMessages: body.messages as any,
       messageMetadata: ({ part }) => {
         if (part.type === "finish") {
           return {

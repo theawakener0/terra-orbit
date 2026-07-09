@@ -17,7 +17,7 @@ const timeTool = tool({
     description: "Get the current time",
     inputSchema: z.object({}),
     execute: async () => {
-        return Date.now;
+        return Date.now();
     }
 }); 
 

@@ -14,12 +14,15 @@ export default function App() {
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const isLoading = status === "submitted" || status === "streaming";
+  const prevLoadingRef = useRef(isLoading);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const isLoading = status === "submitted" || status === "streaming";
+    const wasLoading = prevLoadingRef.current;
+    prevLoadingRef.current = isLoading;
+    const behavior = wasLoading && !isLoading ? "smooth" : "auto";
+    messagesEndRef.current?.scrollIntoView({ behavior });
+  }, [messages, isLoading]);
 
   return (
     <div className="app">

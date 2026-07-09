@@ -17,7 +17,7 @@ export function createImageryModule(client: NasaBaseClient) {
   }
 
   function captions(nasaId: string): Promise<string> {
-    return client.get<string>(`/captions/${encodeURIComponent(nasaId)}`, {}, { noAuth: true })
+    return client.getText(`/captions/${encodeURIComponent(nasaId)}`, {}, { noAuth: true })
   }
 
   return { search, asset, metadata, captions }

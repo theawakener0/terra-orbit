@@ -15,13 +15,13 @@ export default function ResponseStats({
   finishReason?: string;
 }) {
   const label = finishReason ? FINISH_LABELS[finishReason] : "";
-  const show = usage?.totalTokens || label;
+  const show = usage?.totalTokens != null || label;
   if (!show) return null;
 
   return (
     <div className="response-stats" style={label ? { color: "var(--error)" } : undefined}>
-      {usage?.totalTokens && `⚡ ${usage.totalTokens} tok`}
-      {usage?.totalTokens && label && " · "}
+      {usage?.totalTokens != null && `⚡ ${usage.totalTokens} tok`}
+      {usage?.totalTokens != null && label && " · "}
       {label}
     </div>
   );

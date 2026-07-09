@@ -348,6 +348,22 @@ body::after {
   opacity: 0.5;
 }
 
+.tool-call-section-error {
+  color: var(--error);
+}
+
+.tool-call-error {
+  color: var(--error);
+}
+
+.tool-call-icon-success {
+  color: var(--success);
+}
+
+.tool-call-icon-error {
+  color: var(--error);
+}
+
 /* ── Reasoning Block ── */
 
 .reasoning {
@@ -469,6 +485,55 @@ body::after {
 .input-bar button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+/* ── Error Boundary ── */
+
+.error-boundary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  color: var(--error);
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 13px;
+  text-align: center;
+  gap: 8px;
+}
+
+.error-boundary-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.error-boundary-retry {
+  margin-top: 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 16px;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 12px;
+}
+
+.error-boundary-retry:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-surface);
+}
+
+/* ── Chat Error Banner ── */
+
+.chat-error {
+  color: var(--error);
+  font-size: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
 }
 
 /* ── Scrollbar ── */

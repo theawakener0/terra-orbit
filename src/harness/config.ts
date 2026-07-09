@@ -6,3 +6,4 @@ export const hackclub = createOpenRouter({
 });
 
 export const model = "nvidia/nemotron-3-ultra-550b-a55b:free";
+export const subagentModel = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free";

@@ -56,11 +56,11 @@ export default function InputBar({
         rows={1}
       />
       {streaming ? (
-        <button type="button" onClick={onStop}>
+        <button type="button" onClick={onStop} aria-label="Stop generating">
           ■
         </button>
       ) : (
-        <button type="submit" disabled={disabled || !input.trim()}>
+        <button type="submit" disabled={disabled || !input.trim()} aria-label="Send message">
           →
         </button>
       )}

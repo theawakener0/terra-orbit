@@ -25,19 +25,12 @@ export default function ChatMessages({
   }
 
   return (
-    <div className="messages">
+    <div className="messages" role="log" aria-live="polite" aria-label="Chat messages">
       {messages.map((message) => (
         <ChatMessage key={message.id} message={message} />
       ))}
       {error && (
-        <div
-          style={{
-            color: "var(--error)",
-            fontSize: 12,
-            padding: "8px 0",
-            borderTop: "1px solid var(--border)",
-          }}
-        >
+        <div className="chat-error">
           {error.message || "An error occurred"}
         </div>
       )}
