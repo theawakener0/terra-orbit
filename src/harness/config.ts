@@ -5,5 +5,5 @@ export const hackclub = createOpenRouter({
     baseURL: "https://ai.hackclub.com/proxy/v1",
 });
 
-export const model = "nvidia/nemotron-3-ultra-550b-a55b:free";
-export const subagentModel = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free";
+export const model = Bun.env.MAIN_MODEL;
+export const subagentModel = Bun.env.SUB_MODEL;
