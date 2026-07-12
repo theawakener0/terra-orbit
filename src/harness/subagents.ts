@@ -16,6 +16,7 @@ const helios = new ToolLoopAgent({
     tools: {
        ...donki_tools 
     },
+    maxRetries: 5,
 });
 
 const aegis = new ToolLoopAgent({
@@ -25,6 +26,7 @@ const aegis = new ToolLoopAgent({
         ...neo_tools,
         ...web_tools
     },
+    maxRetries: 5,
 });
 
 const gaia = new ToolLoopAgent({
@@ -34,6 +36,7 @@ const gaia = new ToolLoopAgent({
         ...eonet_tools,
         ...epic_tools
     },
+    maxRetries: 5,
 });
 
 const chronos = new ToolLoopAgent({
@@ -44,6 +47,7 @@ const chronos = new ToolLoopAgent({
         ...imagery_tools,
         ...epic_tools
     },
+    maxRetries: 5,
 });
 
 const prometheus = new ToolLoopAgent({
@@ -53,6 +57,7 @@ const prometheus = new ToolLoopAgent({
         ...techtransfer_tools,
         ...web_tools
     },
+    maxRetries: 5,
 });
 
 const argus = new ToolLoopAgent({
@@ -61,6 +66,7 @@ const argus = new ToolLoopAgent({
     tools: {
         ...web_tools
     },
+    maxRetries: 5,
 });
 
 export const helios_subagent = tool({
@@ -69,11 +75,15 @@ export const helios_subagent = tool({
         task: z.string().describe("The task to be performed by Helios"),
     }),
     execute: async ({task}, {abortSignal}) => {
-        const result = await helios.generate({
-            prompt: task,
-            abortSignal,
-        });
-        return result.text;
+        try {
+            const result = await helios.generate({
+                prompt: task,
+                abortSignal,
+            });
+            return result.text;
+        } catch (err) {
+            return `Error: ${(err as Error).message}`;
+        }
     },
 });
 
@@ -83,11 +93,15 @@ export const aegis_subagent = tool({
         task: z.string().describe("The task to be performed by Aegis"),
     }),
     execute: async ({task}, {abortSignal}) => {
-        const result = await aegis.generate({
-            prompt: task,
-            abortSignal,
-        });
-        return result.text;
+        try {
+            const result = await aegis.generate({
+                prompt: task,
+                abortSignal,
+            });
+            return result.text;
+        } catch (err) {
+            return `Error: ${(err as Error).message}`;
+        }
     },
 });
 
@@ -97,11 +111,15 @@ export const gaia_subagent = tool({
         task: z.string().describe("The task to be performed by Gaia"),
     }),
     execute: async ({task}, {abortSignal}) => {
+        try {
         const result = await gaia.generate({
             prompt: task,
             abortSignal,
         });
         return result.text;
+        } catch (err) {
+            return `Error: ${(err as Error).message}`;
+        }
     },
 });
 
@@ -111,11 +129,15 @@ export const chronos_subagent = tool({
         task: z.string().describe("The task to be performed by Chronos"),
     }),
     execute: async ({task}, {abortSignal}) => {
-        const result = await chronos.generate({
-            prompt: task,
-            abortSignal,
-        });
-        return result.text;
+        try {
+            const result = await chronos.generate({
+                prompt: task,
+                abortSignal,
+            });
+            return result.text;
+        } catch(err) {
+            return `Error: ${(err as Error).message}`; 
+        }
     },
 });
 
@@ -125,11 +147,15 @@ export const prometheus_subagent = tool({
         task: z.string().describe("The task to be performed by Prometheus"),
     }),
     execute: async ({task}, {abortSignal}) => {
-        const result = await prometheus.generate({
-            prompt: task,
-            abortSignal,
-        });
-        return result.text;
+        try {
+                const result = await prometheus.generate({
+                    prompt: task,
+                abortSignal,
+            });
+            return result.text;
+        } catch(err) {
+            return `Error: ${(err as Error).message}`;
+        }
     },
 });
 
@@ -139,11 +165,15 @@ export const argus_subagent = tool({
         task: z.string().describe("The task to be performed by Argus"),
     }),
     execute: async ({task}, {abortSignal}) => {
+        try {
         const result = await argus.generate({
             prompt: task,
             abortSignal,
         });
         return result.text;
+        } catch (err) {
+            return `Error: ${(err as Error).message}`;
+        }
     },
 });
 

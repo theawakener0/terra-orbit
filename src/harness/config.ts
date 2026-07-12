@@ -5,5 +5,5 @@ export const hackclub = createOpenRouter({
     baseURL: "https://ai.hackclub.com/proxy/v1",
 });
 
-export const model = Bun.env.MAIN_MODEL;
-export const subagentModel = Bun.env.SUB_MODEL;
+export const model: string | undefined = Bun.env.MAIN_MODEL;
+export const subagentModel: string | undefined = Bun.env.SUB_MODEL;
