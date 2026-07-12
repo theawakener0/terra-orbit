@@ -1,4 +1,4 @@
-import { ToolLoopAgent, tool } from "ai";
+import { ToolLoopAgent, isStepCount, tool } from "ai";
 import { z } from "zod";
 import { donki_tools } from "./tools/donki_tool";
 import { neo_tools } from "./tools/neo_tool";
@@ -17,6 +17,8 @@ const helios = new ToolLoopAgent({
        ...donki_tools 
     },
     maxRetries: 5,
+    toolChoice: "required",
+    stopWhen: isStepCount(30), 
 });
 
 const aegis = new ToolLoopAgent({
@@ -27,6 +29,8 @@ const aegis = new ToolLoopAgent({
         ...web_tools
     },
     maxRetries: 5,
+    toolChoice: "required",
+    stopWhen: isStepCount(30),
 });
 
 const gaia = new ToolLoopAgent({
@@ -37,6 +41,8 @@ const gaia = new ToolLoopAgent({
         ...epic_tools
     },
     maxRetries: 5,
+    toolChoice: "required",
+    stopWhen: isStepCount(30),
 });
 
 const chronos = new ToolLoopAgent({
@@ -48,6 +54,8 @@ const chronos = new ToolLoopAgent({
         ...epic_tools
     },
     maxRetries: 5,
+    toolChoice: "required",
+    stopWhen: isStepCount(30),
 });
 
 const prometheus = new ToolLoopAgent({
@@ -58,6 +66,8 @@ const prometheus = new ToolLoopAgent({
         ...web_tools
     },
     maxRetries: 5,
+    toolChoice: "required",
+    stopWhen: isStepCount(30),
 });
 
 const argus = new ToolLoopAgent({
@@ -67,6 +77,8 @@ const argus = new ToolLoopAgent({
         ...web_tools
     },
     maxRetries: 5,
+    toolChoice: "required",
+    stopWhen: isStepCount(30),
 });
 
 export const helios_subagent = tool({
@@ -112,11 +124,11 @@ export const gaia_subagent = tool({
     }),
     execute: async ({task}, {abortSignal}) => {
         try {
-        const result = await gaia.generate({
-            prompt: task,
-            abortSignal,
-        });
-        return result.text;
+            const result = await gaia.generate({
+                prompt: task,
+                abortSignal,
+            });
+            return result.text;
         } catch (err) {
             return `Error: ${(err as Error).message}`;
         }
@@ -150,7 +162,7 @@ export const prometheus_subagent = tool({
         try {
                 const result = await prometheus.generate({
                     prompt: task,
-                abortSignal,
+                    abortSignal,
             });
             return result.text;
         } catch(err) {

@@ -9,7 +9,7 @@ const format_apod_result = (result: ApodResponse): string => {
 
 } 
 
-export const apond_today = tool({
+export const apod_today = tool({
     description: "Get today's APOD image to retrieve",
     inputSchema: z.object({}),
     execute: async () => {
@@ -102,7 +102,7 @@ export const apod_range = tool({
 });
 
 export const apod_tools = {
-    apond_today: apond_today,
+    apod_today: apod_today,
     apod_date: apod_date,
     apod_random: apod_random,
     apod_range: apod_range,
