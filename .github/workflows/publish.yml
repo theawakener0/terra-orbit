@@ -16,11 +16,15 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+      - name: Update package.json version
+        run: npm version $VERSION --no-git-tag-version --allow-same-version
       - run: bun install
       - run: bun run build
       - run: |
           npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
-          npm publish
+          npm publish --ignore-scripts
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - uses: softprops/action-gh-release@v2
