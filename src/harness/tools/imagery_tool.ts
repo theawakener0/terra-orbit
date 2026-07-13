@@ -1,7 +1,7 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { nasa } from "./index";
-import type { ImageryItem } from "../../nasa";
+import type { ImageryItem, ImageryMetadataResponse } from "../../nasa";
 import { NasaApiError, RateLimitError } from "../../nasa";
 
 function formatSearchItem(item: ImageryItem): string {
@@ -20,6 +20,10 @@ function formatSearchItem(item: ImageryItem): string {
     `Keywords: ${data.keywords?.join(", ") ?? "None"}\n` +
     `Links:\n  ${links ?? "None"}`
   );
+}
+
+function formatImageryMetadata(m: ImageryMetadataResponse): string {
+  return `Metadata URL: ${m.location}`;
 }
 
 export const imagery_search = tool({
@@ -99,7 +103,7 @@ export const imagery_metadata = tool({
   execute: async ({ nasa_id }) => {
         try {
             const result = await nasa.imagery.metadata(nasa_id);
-            return JSON.stringify(result, null, 2);
+            return formatImageryMetadata(result);
         } catch (err) {
             if (err instanceof RateLimitError) {
                 return `Rate limited — retry after ${err.retryAfter}s`

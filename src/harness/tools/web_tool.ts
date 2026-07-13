@@ -3,7 +3,38 @@ import { z } from "zod";
 
 const EXA_BASE = "https://ai.hackclub.com/proxy/v1/exa";
 
-async function exaFetch(endpoint: string, body: Record<string, unknown>): Promise<string> {
+interface ExaResult {
+  title?: string
+  url?: string
+  publishedDate?: string
+  author?: string
+  text?: string
+  score?: number
+}
+
+function isExaResult(v: unknown): v is ExaResult {
+  return typeof v === "object" && v !== null;
+}
+
+function formatResult(r: ExaResult): string {
+  const lines: string[] = [];
+  if (r.title) lines.push(`Title: ${r.title}`);
+  if (r.url) lines.push(`URL: ${r.url}`);
+  if (r.publishedDate) lines.push(`Published: ${r.publishedDate}`);
+  if (r.author) lines.push(`Author: ${r.author}`);
+  if (r.score !== undefined) lines.push(`Score: ${r.score}`);
+  if (r.text) lines.push(`Text:\n${r.text}`);
+  return lines.join("\n");
+}
+
+function formatResultsList(data: unknown): string {
+  const obj = data as Record<string, unknown>;
+  const results = obj?.results;
+  if (!Array.isArray(results) || results.length === 0) return "No results found.";
+  return results.filter(isExaResult).map(formatResult).join("\n---\n");
+}
+
+async function exaFetch(endpoint: string, body: Record<string, unknown>): Promise<unknown> {
   const response = await fetch(`${EXA_BASE}/${endpoint}`, {
     method: "POST",
     headers: {
@@ -18,8 +49,7 @@ async function exaFetch(endpoint: string, body: Record<string, unknown>): Promis
     throw new Error(`Exa API error ${response.status}: ${text || response.statusText}`);
   }
 
-  const data = await response.json();
-  return JSON.stringify(data, null, 2);
+  return response.json();
 }
 
 export const web_search = tool({
@@ -33,7 +63,12 @@ export const web_search = tool({
     endPublishedDate: z.string().optional().describe("Latest publish date (ISO 8601)"),
   }),
   execute: async ({ query, numResults, includeDomains, excludeDomains, startPublishedDate, endPublishedDate }) => {
-    return exaFetch("search", { query, numResults, includeDomains, excludeDomains, startPublishedDate, endPublishedDate });
+    try {
+      const data = await exaFetch("search", { query, numResults, includeDomains, excludeDomains, startPublishedDate, endPublishedDate });
+      return formatResultsList(data);
+    } catch (err) {
+      return `Error: ${(err as Error).message}`;
+    }
   },
 });
 
@@ -46,7 +81,12 @@ export const web_find_similar = tool({
     excludeDomains: z.array(z.string()).optional(),
   }),
   execute: async ({ url, numResults, includeDomains, excludeDomains }) => {
-    return exaFetch("findSimilar", { url, numResults, includeDomains, excludeDomains });
+    try {
+      const data = await exaFetch("findSimilar", { url, numResults, includeDomains, excludeDomains });
+      return formatResultsList(data);
+    } catch (err) {
+      return `Error: ${(err as Error).message}`;
+    }
   },
 });
 
@@ -57,7 +97,12 @@ export const web_get_contents = tool({
     textMode: z.boolean().optional().default(true).describe("Return text-only version"),
   }),
   execute: async ({ urls, textMode }) => {
-    return exaFetch("contents", { urls, textMode });
+    try {
+      const data = await exaFetch("contents", { urls, textMode });
+      return formatResultsList(data);
+    } catch (err) {
+      return `Error: ${(err as Error).message}`;
+    }
   },
 });
 
@@ -68,7 +113,13 @@ export const web_answer = tool({
     stream: z.boolean().optional().default(false),
   }),
   execute: async ({ query, stream }) => {
-    return exaFetch("answer", { query, stream });
+    try {
+      const data = await exaFetch("answer", { query, stream }) as Record<string, unknown>;
+      if (typeof data?.answer === "string") return data.answer;
+      return formatResultsList(data);
+    } catch (err) {
+      return `Error: ${(err as Error).message}`;
+    }
   },
 });
 

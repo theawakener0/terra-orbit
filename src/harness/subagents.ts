@@ -94,7 +94,7 @@ export const helios_subagent = tool({
             });
             return result.text;
         } catch (err) {
-            return `Error: ${(err as Error).message}`;
+            return `Error from helios: ${(err as Error).message}`;
         }
     },
 });
@@ -112,7 +112,7 @@ export const aegis_subagent = tool({
             });
             return result.text;
         } catch (err) {
-            return `Error: ${(err as Error).message}`;
+            return `Error from aegis: ${(err as Error).message}`;
         }
     },
 });
@@ -130,7 +130,7 @@ export const gaia_subagent = tool({
             });
             return result.text;
         } catch (err) {
-            return `Error: ${(err as Error).message}`;
+            return `Error from gaia: ${(err as Error).message}`;
         }
     },
 });
@@ -148,7 +148,7 @@ export const chronos_subagent = tool({
             });
             return result.text;
         } catch(err) {
-            return `Error: ${(err as Error).message}`; 
+            return `Error from chronos: ${(err as Error).message}`; 
         }
     },
 });
@@ -160,13 +160,13 @@ export const prometheus_subagent = tool({
     }),
     execute: async ({task}, {abortSignal}) => {
         try {
-                const result = await prometheus.generate({
-                    prompt: task,
-                    abortSignal,
+            const result = await prometheus.generate({
+                prompt: task,
+                abortSignal,
             });
             return result.text;
         } catch(err) {
-            return `Error: ${(err as Error).message}`;
+            return `Error from prometheus: ${(err as Error).message}`;
         }
     },
 });
@@ -178,13 +178,13 @@ export const argus_subagent = tool({
     }),
     execute: async ({task}, {abortSignal}) => {
         try {
-        const result = await argus.generate({
-            prompt: task,
-            abortSignal,
-        });
-        return result.text;
+            const result = await argus.generate({
+                prompt: task,
+                abortSignal,
+            });
+            return result.text;
         } catch (err) {
-            return `Error: ${(err as Error).message}`;
+            return `Error from argus: ${(err as Error).message}`;
         }
     },
 });
