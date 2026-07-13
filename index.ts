@@ -1,3 +1,4 @@
+#!/usr/bin/env bun
 const flag = process.argv[2];
 
 if (flag === "--tui") {
@@ -16,7 +17,7 @@ if (flag === "--tui") {
   startServer();
 } else {
   console.log("Usage:");
-  console.log("  bun run index.ts --tui    Launch terminal UI");
-  console.log("  bun run index.ts --web    Launch web UI");
+  console.log("  terra-orbit --tui    Launch terminal UI");
+  console.log("  terra-orbit --web    Launch web UI");
   process.exit(1);
 }

@@ -1,14 +1,32 @@
 {
   "name": "terra-orbit",
-  "module": "index.ts",
+  "version": "0.1.2",
+  "description": "An AI space harness powered with NASA APIs",
+  "license": "MIT",
   "type": "module",
-  "private": true,
+  "bin": {
+    "terra-orbit": "bin/terra-orbit.mjs"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
   "scripts": {
+    "build": "bun build ./index.ts --outdir ./dist --target bun",
+    "prepublishOnly": "bun run build",
     "web": "bun run src/web/server.ts",
     "web:dev": "bun run --watch src/web/server.ts",
     "web:build": "cd src/webui && npx vite build",
     "web:all": "cd src/webui && npx vite build && cd ../.. && bun run src/web/server.ts"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theawakener0/terra-orbit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/theawakener0/terra-orbit/issues"
+  },
+  "homepage": "https://github.com/theawakener0/terra-orbit#readme",
   "devDependencies": {
     "@types/bun": "latest",
     "@types/react": "^19.2.17",
