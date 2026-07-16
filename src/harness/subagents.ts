@@ -16,9 +16,9 @@ const helios = new ToolLoopAgent({
     tools: {
        ...donki_tools 
     },
-    maxRetries: 5,
+    maxRetries: 3,
     toolChoice: "required",
-    stopWhen: isStepCount(30), 
+    stopWhen: isStepCount(10), 
 });
 
 const aegis = new ToolLoopAgent({
@@ -28,9 +28,9 @@ const aegis = new ToolLoopAgent({
         ...neo_tools,
         ...web_tools
     },
-    maxRetries: 5,
+    maxRetries: 3,
     toolChoice: "required",
-    stopWhen: isStepCount(30),
+    stopWhen: isStepCount(12),
 });
 
 const gaia = new ToolLoopAgent({
@@ -40,9 +40,9 @@ const gaia = new ToolLoopAgent({
         ...eonet_tools,
         ...epic_tools
     },
-    maxRetries: 5,
+    maxRetries: 3,
     toolChoice: "required",
-    stopWhen: isStepCount(30),
+    stopWhen: isStepCount(10),
 });
 
 const chronos = new ToolLoopAgent({
@@ -53,9 +53,9 @@ const chronos = new ToolLoopAgent({
         ...imagery_tools,
         ...epic_tools
     },
-    maxRetries: 5,
+    maxRetries: 3,
     toolChoice: "required",
-    stopWhen: isStepCount(30),
+    stopWhen: isStepCount(15),
 });
 
 const prometheus = new ToolLoopAgent({
@@ -65,9 +65,9 @@ const prometheus = new ToolLoopAgent({
         ...techtransfer_tools,
         ...web_tools
     },
-    maxRetries: 5,
+    maxRetries: 3,
     toolChoice: "required",
-    stopWhen: isStepCount(30),
+    stopWhen: isStepCount(10),
 });
 
 const argus = new ToolLoopAgent({
@@ -76,9 +76,9 @@ const argus = new ToolLoopAgent({
     tools: {
         ...web_tools
     },
-    maxRetries: 5,
+    maxRetries: 3,
     toolChoice: "required",
-    stopWhen: isStepCount(30),
+    stopWhen: isStepCount(8),
 });
 
 export const helios_subagent = tool({
@@ -86,15 +86,17 @@ export const helios_subagent = tool({
     inputSchema: z.object({
         task: z.string().describe("The task to be performed by Helios"),
     }),
-    execute: async ({task}, {abortSignal}) => {
+    execute: async function* ({task}, {abortSignal}) {
         try {
-            const result = await helios.generate({
+            const { textStream } = await helios.stream({
                 prompt: task,
                 abortSignal,
             });
-            return result.text;
+            for await (const text of textStream) {
+                yield text;
+            }
         } catch (err) {
-            return `Error from helios: ${(err as Error).message}`;
+            yield `\n\n[Error from helios: ${(err as Error).message}]`;
         }
     },
 });
@@ -104,15 +106,17 @@ export const aegis_subagent = tool({
     inputSchema: z.object({
         task: z.string().describe("The task to be performed by Aegis"),
     }),
-    execute: async ({task}, {abortSignal}) => {
+    execute: async function* ({task}, {abortSignal}) {
         try {
-            const result = await aegis.generate({
+            const { textStream } = await aegis.stream({
                 prompt: task,
                 abortSignal,
             });
-            return result.text;
+            for await (const text of textStream) {
+                yield text;
+            }
         } catch (err) {
-            return `Error from aegis: ${(err as Error).message}`;
+            yield `\n\n[Error from aegis: ${(err as Error).message}]`;
         }
     },
 });
@@ -122,15 +126,17 @@ export const gaia_subagent = tool({
     inputSchema: z.object({
         task: z.string().describe("The task to be performed by Gaia"),
     }),
-    execute: async ({task}, {abortSignal}) => {
+    execute: async function* ({task}, {abortSignal}) {
         try {
-            const result = await gaia.generate({
+            const { textStream } = await gaia.stream({
                 prompt: task,
                 abortSignal,
             });
-            return result.text;
+            for await (const text of textStream) {
+                yield text;
+            }
         } catch (err) {
-            return `Error from gaia: ${(err as Error).message}`;
+            yield `\n\n[Error from gaia: ${(err as Error).message}]`;
         }
     },
 });
@@ -140,15 +146,17 @@ export const chronos_subagent = tool({
     inputSchema: z.object({
         task: z.string().describe("The task to be performed by Chronos"),
     }),
-    execute: async ({task}, {abortSignal}) => {
+    execute: async function* ({task}, {abortSignal}) {
         try {
-            const result = await chronos.generate({
+            const { textStream } = await chronos.stream({
                 prompt: task,
                 abortSignal,
             });
-            return result.text;
+            for await (const text of textStream) {
+                yield text;
+            }
         } catch(err) {
-            return `Error from chronos: ${(err as Error).message}`; 
+            yield `\n\n[Error from chronos: ${(err as Error).message}]`; 
         }
     },
 });
@@ -158,15 +166,17 @@ export const prometheus_subagent = tool({
     inputSchema: z.object({
         task: z.string().describe("The task to be performed by Prometheus"),
     }),
-    execute: async ({task}, {abortSignal}) => {
+    execute: async function* ({task}, {abortSignal}) {
         try {
-            const result = await prometheus.generate({
+            const { textStream } = await prometheus.stream({
                 prompt: task,
                 abortSignal,
             });
-            return result.text;
+            for await (const text of textStream) {
+                yield text;
+            }
         } catch(err) {
-            return `Error from prometheus: ${(err as Error).message}`;
+            yield `\n\n[Error from prometheus: ${(err as Error).message}]`;
         }
     },
 });
@@ -176,15 +186,17 @@ export const argus_subagent = tool({
     inputSchema: z.object({
         task: z.string().describe("The task to be performed by Argus"),
     }),
-    execute: async ({task}, {abortSignal}) => {
+    execute: async function* ({task}, {abortSignal}) {
         try {
-            const result = await argus.generate({
+            const { textStream } = await argus.stream({
                 prompt: task,
                 abortSignal,
             });
-            return result.text;
+            for await (const text of textStream) {
+                yield text;
+            }
         } catch (err) {
-            return `Error from argus: ${(err as Error).message}`;
+            yield `\n\n[Error from argus: ${(err as Error).message}]`;
         }
     },
 });

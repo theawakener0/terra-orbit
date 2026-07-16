@@ -6,6 +6,7 @@ export interface ToolPart {
   input: Record<string, unknown>;
   output?: unknown;
   errorText?: string;
+  preliminary?: boolean;
 }
 
 function formatName(name: string): string {
@@ -18,7 +19,10 @@ function formatName(name: string): string {
 export default function ToolCallCard({ part }: { part: ToolPart }) {
   const [open, setOpen] = useState(false);
 
+  const isStreaming = part.state === "output-available" && part.preliminary;
+
   const statusText = () => {
+    if (isStreaming) return "streaming";
     switch (part.state) {
       case "input-streaming":
         return "streaming";
@@ -78,11 +82,13 @@ export default function ToolCallCard({ part }: { part: ToolPart }) {
   };
 
   const stateClass =
-    part.state === "output-available"
-      ? "done"
-      : part.state === "output-error"
-        ? "error"
-        : "executing";
+    isStreaming
+      ? "streaming"
+      : part.state === "output-available"
+        ? "done"
+        : part.state === "output-error"
+          ? "error"
+          : "executing";
 
   return (
     <div className="tool-call">
@@ -95,7 +101,7 @@ export default function ToolCallCard({ part }: { part: ToolPart }) {
         aria-expanded={open}
         aria-label={`${formatName(part.toolName)} tool call`}
       >
-        {part.state === "input-streaming" || part.state === "input-available" ? (
+        {part.state === "input-streaming" || part.state === "input-available" || isStreaming ? (
           <span className="tool-call-spinner" />
         ) : part.state === "output-available" ? (
           <span className="tool-call-icon-success">✓</span>

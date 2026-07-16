@@ -10,6 +10,7 @@ interface ToolPartData {
   input: Record<string, unknown>;
   output: unknown;
   errorText?: string;
+  preliminary?: boolean;
 }
 
 function isToolPart(part: Record<string, unknown>): ToolPartData | null {
@@ -21,6 +22,7 @@ function isToolPart(part: Record<string, unknown>): ToolPartData | null {
       input: (part.input as Record<string, unknown>) ?? {},
       output: part.output,
       errorText: part.errorText as string | undefined,
+      preliminary: part.preliminary as boolean | undefined,
     };
   }
   return null;

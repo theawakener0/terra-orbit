@@ -20,6 +20,7 @@
   --brand-orbit: #e74c3c;
   --success: #22c55e;
   --error: #ef4444;
+  --accent: #3b82f6;
   --pending: #888888;
   --app-padding: 16px;
   --app-max-width: 840px;
@@ -297,6 +298,10 @@ body::after {
 
 .tool-call-status.done {
   color: var(--success);
+}
+
+.tool-call-status.streaming {
+  color: var(--accent);
 }
 
 .tool-call-status.error {
