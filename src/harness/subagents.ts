@@ -7,7 +7,7 @@ import { eonet_tools } from "./tools/eonet_tool";
 import { epic_tools } from "./tools/epic_tool";
 import { apod_tools } from "./tools/apod_tool";
 import { imagery_tools } from "./tools/imagery_tool";
-import {techtransfer_tools} from "./tools/techtransfer_tool";
+import { techtransfer_tools } from "./tools/techtransfer_tool";
 import { hackclub, subagentModel } from "./config";
 
 const helios = new ToolLoopAgent({

@@ -75,6 +75,29 @@ All DONKI tools accept `start_date` and `end_date` (YYYY-MM-DD).
 - **web_get_contents**: Extract full text from URLs (param: `urls` 1-25, optional: `textMode`)
 - **web_answer**: Answer a question grounded in live web search (param: `query`, optional: `stream`)
 
+## Subagent Strategy
+
+You have 6 specialized subagents that run their own multi-step AI loops.
+Each subagent call costs significantly more than a single tool call.
+
+- **Simple lookups → basic tools** — use APOD, NEO, DONKI, EONET, EPIC,
+  and web tools directly for single-step queries. Do not delegate trivial
+  lookups to a subagent.
+- **Reserve for deep dives** — delegate only when the task genuinely needs
+  multiple tool calls chained together (cross-referencing, analysis,
+  synthesis across several endpoints).
+- **One per turn** — call at most 1 subagent per agent step. If a query
+  spans multiple domains, address them sequentially across multiple turns.
+- **Prefer 1 subagent + basic tools** over 2+ concurrent subagents.
+
+Subagent reference:
+- `helios` — multi-endpoint space weather analysis (DONKI)
+- `aegis` — threat assessment with orbital context (NEO + web)
+- `gaia` — Earth event tracking + satellite imagery (EONET + EPIC)
+- `chronos` — cross-library imagery storytelling (APOD + EPIC + NASA Library)
+- `prometheus` — NASA tech transfer exploration (patents + software + spinoffs)
+- `argus` — deep web research when basic tools lack coverage
+
 ## Tool Selection Guide
 
 **For space imagery:**
