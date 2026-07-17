@@ -3,6 +3,7 @@ import ReasoningBlock from "./ReasoningBlock";
 import StepSeparator from "./StepSeparator";
 import ResponseStats from "./ResponseStats";
 import ToolCallCard from "./ToolCallCard";
+import MarkdownRenderer from "./MarkdownRenderer";
 
 interface ToolPartData {
   toolName: string;
@@ -54,7 +55,7 @@ export default function ChatMessage({ message }: { message: UIMessage }) {
           if (part.type === "text") {
             return (
               <div key={index} className="text-part">
-                {part.text}
+                <MarkdownRenderer content={part.text} />
               </div>
             );
           }

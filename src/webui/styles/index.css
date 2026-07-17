@@ -225,7 +225,127 @@ body::after {
   overflow-x: auto;
   border: 1px solid var(--border);
   line-height: 1.5;
+  margin-bottom: 8px;
 }
+
+.text-part pre code {
+  background: none;
+  padding: 0;
+  border: none;
+}
+
+.text-part :not(pre) > code {
+  word-break: break-word;
+}
+
+.text-part h1,
+.text-part h2,
+.text-part h3,
+.text-part h4,
+.text-part h5,
+.text-part h6 {
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.text-part h1 { font-size: 18px; }
+.text-part h2 { font-size: 16px; }
+.text-part h3 { font-size: 15px; }
+.text-part :is(h4, h5, h6) { font-size: 14px; }
+
+.text-part ul,
+.text-part ol {
+  padding-left: 20px;
+  margin-bottom: 8px;
+}
+
+.text-part li { margin-bottom: 4px; }
+.text-part li:last-child { margin-bottom: 0; }
+
+.text-part blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.text-part table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.text-part th,
+.text-part td {
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.text-part th {
+  background: var(--bg-elevated);
+  font-weight: 600;
+}
+
+.text-part tr:nth-child(even) { background: var(--bg-surface); }
+
+.text-part a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.text-part a:hover { text-decoration: underline; }
+
+.text-part hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+.text-part img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* ── Syntax Highlighting ── */
+
+.text-part .hljs {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.text-part .hljs-keyword,
+.text-part .hljs-selector-tag,
+.text-part .hljs-built_in,
+.text-part .hljs-type,
+.text-part .hljs-literal { color: #c792ea; }
+
+.text-part .hljs-string,
+.text-part .hljs-attr { color: #c3e88d; }
+
+.text-part .hljs-comment,
+.text-part .hljs-quote { color: #546e7a; font-style: italic; }
+
+.text-part .hljs-number { color: #f78c6c; }
+
+.text-part .hljs-title,
+.text-part .hljs-section,
+.text-part .hljs-function { color: #82aaff; }
+
+.text-part .hljs-variable,
+.text-part .hljs-params { color: #eeffff; }
+
+.text-part .hljs-attribute { color: #ffcb6b; }
+
+.text-part .hljs-selector-class { color: #ffcb6b; }
+
+.text-part .hljs-selector-pseudo,
+.text-part .hljs-template-tag { color: #89ddff; }
 
 /* ── Step Separator ── */
 
