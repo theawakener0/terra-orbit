@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { nasa } from "./index";
+import { nasa } from "../config";
 import { NasaApiError, RateLimitError } from "../../nasa";
 
 const format_techtransfer_tool = (result: string): string => {

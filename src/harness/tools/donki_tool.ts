@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { nasa } from "./index"
+import { nasa } from "../config"
 import {NasaApiError, RateLimitError} from "../../nasa";
 import type { CmeEvent, SolarFlare, GeomagneticStorm, SolarEnergeticParticle, MagnetopauseCrossing, InterplanetaryShock, RadiationBeltEnhancement, HightSpeedStream, WsaEnlilSimulation, DonkiNotification } from "../../nasa";
 

@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { nasa } from "./index";
+import { nasa } from "../config";
 import type { EpicImage } from "../../nasa";
 import { NasaApiError, RateLimitError } from "../../nasa";
 

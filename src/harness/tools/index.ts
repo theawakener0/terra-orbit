@@ -11,8 +11,6 @@ import { imagery_tools } from "./imagery_tool";
 import { web_tools } from "./web_tool";
 
 
-export const nasa = new NasaClient(Bun.env.NASA_API_KEY!);
-
 const timeTool = tool({
     description: "Get the current time",
     inputSchema: z.object({}),

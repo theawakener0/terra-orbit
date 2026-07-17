@@ -1,13 +1,13 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { nasa } from "./index";
+import { nasa } from "../config";
 import type { EonetEvent, EonetCategory } from "../../nasa";
 import { NasaApiError, RateLimitError } from "../../nasa";
 
 function formatEvents(events: EonetEvent[]): string {
   return events
     .map((e) => {
-      const cats = e.categories.map((c) => c.title).join(", ");
+      const cats = e.categories.map((c) => c.title).join(", "); //  MEOW.....?
       const coords = e.geometries
         .map((g) => `[${g.coordinates.join(", ")}]`)
         .join("; ");

@@ -12,7 +12,7 @@
     "bin"
   ],
   "scripts": {
-    "build": "bun build ./index.ts --outdir ./dist --target bun",
+    "build": "bun build ./index.ts --outdir ./dist --target bun && cp src/harness/context/*.txt dist/ && cd src/webui && npx vite build && mkdir -p ../../dist/webui && cp -r dist/* ../../dist/webui/",
     "prepublishOnly": "bun run build",
     "web": "bun run src/web/server.ts",
     "web:dev": "bun run --watch src/web/server.ts",

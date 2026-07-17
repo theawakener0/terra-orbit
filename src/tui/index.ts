@@ -1,3 +1,19 @@
+/*
+ *
+ *
+ * This code is currently DEPRECATED. It is not currently used in the main application.
+ * future use. It is not currently used in the main application.
+ *
+ *
+ */
+
+
+
+
+
+
+
+
 import { createCliRenderer, RGBA, SyntaxStyle, InputRenderable, TextRenderable, BoxRenderable, InputRenderableEvents, CodeRenderable } from "@opentui/core";
 import { NasaClient, NasaApiError, RateLimitError } from "../nasa";
 import { terra } from "../harness/agent";

@@ -1,7 +1,16 @@
 import { handleChat } from "./api/chat";
+import { fileURLToPath } from "bun:url";
+import { dirname, resolve } from "path";
+import { port as cfgPort } from "../harness/config";
 
-const PORT = parseInt(process.env.PORT || "3000");
-const DIST = "./src/webui/dist";
+const PORT = cfgPort;
+
+const dir = dirname(fileURLToPath(import.meta.url));
+const prodDist = resolve(dir, "webui");
+const devDist = resolve(dir, "../webui/dist");
+const DIST = (await Bun.file(resolve(prodDist, "index.html")).exists())
+  ? prodDist
+  : devDist;
 
 export function startServer() {
   Bun.serve({
