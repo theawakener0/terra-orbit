@@ -14,13 +14,10 @@
   <a href="https://bun.sh"><img src="https://img.shields.io/badge/powered%20by-Bun-%23f9f9f9?style=flat-square&logo=bun" alt="Bun"></a>
 </p>
 
-<p align="center">
-  <a href="https://youtu.be/IGyC4X45VKE">
-    <img src="https://img.youtube.com/vi/IGyC4X45VKE/hqdefault.jpg" alt="TerraOrbit Demo Video" width="560">
-    <br>
-    ▶ Watch the demo
-  </a>
-</p>
+## Video demo
+
+[![Watch the video](https://youtu.be/IGyC4X45VKE)](https://youtu.be/IGyC4X45VKE)
+
 
 ## Try It
 
@@ -117,6 +114,5 @@ bun run build
 
 ---
 
-<p align="center">
-  MIT &copy; <a href="https://github.com/theawakener0">theawakener0</a>
-</p>
+[MIT](LICENSE)
+
