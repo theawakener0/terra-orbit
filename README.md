@@ -15,12 +15,14 @@
 </p>
 
 
-Uploading T
-
 
 ## Video demo
 
-[![Watch the video](https://youtu.be/IGyC4X45VKE)](https://youtu.be/IGyC4X45VKE)
+<p>
+<a href="https://www.youtube.com/watch?v=P8luPmEa1QI"><img width="25" src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg">TerraOrbit | Demo Video</a>
+</p>
+
+<a href="https://www.youtube.com/watch?v=IGyC4X45VKE"><img width="550" src="https://i3.ytimg.com/vi/IGyC4X45VKE/maxresdefault.jpg"></a>
 
 
 ## Try It
