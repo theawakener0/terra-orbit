@@ -91,7 +91,7 @@ Get `NASA_API_KEY` from [NASA Open APIs](https://api.nasa.gov/) and `HACK_CLUB_A
 
 ## Credits
 
-This project wasn't possible without the use of [HackClub AI](https://ai.hackclub.com/) and [NASA Open APIs](https://api.nasa.gov/). Also [Vercel AI SDK](https://ai-sdk.dev/) that helped me in  build the AI harness.
+This project wasn't possible without the use of [HackClub AI](https://ai.hackclub.com/) and [NASA Open APIs](https://api.nasa.gov/). Also, [Vercel AI SDK](https://ai-sdk.dev/) that helped me in build the AI harness.
 
 ---
 
