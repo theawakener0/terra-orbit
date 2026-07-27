@@ -38,7 +38,7 @@ async function exaFetch(endpoint: string, body: Record<string, unknown>): Promis
   const response = await fetch(`${EXA_BASE}/${endpoint}`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${Bun.env.HACK_CLUB_AI_API_KEY}`,
+      Authorization: `Bearer ${process.env.HACK_CLUB_AI_API_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),

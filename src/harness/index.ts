@@ -15,5 +15,5 @@ const result = streamText({
 });
 
 for await (const text of result.textStream) {
-    Bun.stdout.write(text);
+    process.stdout.write(text);
 }

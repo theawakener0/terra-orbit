@@ -12,8 +12,9 @@
     "bin"
   ],
   "scripts": {
-    "build": "bun build ./index.ts --outdir ./dist --target bun && cp src/harness/context/*.txt dist/ && cd src/webui && npx vite build && mkdir -p ../../dist/webui && cp -r dist/* ../../dist/webui/",
+    "build": "bun build ./index.ts --outdir ./dist --target node && cp src/harness/context/*.txt dist/ && cd src/webui && npx vite build && mkdir -p ../../dist/webui && cp -r dist/* ../../dist/webui/",
     "prepublishOnly": "bun run build",
+    "test": "node test/smoke.mjs",
     "web": "bun run src/web/server.ts",
     "web:dev": "bun run --watch src/web/server.ts",
     "web:build": "cd src/webui && npx vite build",
@@ -28,7 +29,7 @@
   },
   "homepage": "https://github.com/theawakener0/terra-orbit#readme",
   "devDependencies": {
-    "@types/bun": "latest",
+    "@types/node": "^22",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
@@ -37,11 +38,13 @@
   "peerDependencies": {
     "typescript": "^5"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "@ai-sdk/react": "^4.0.19",
     "@ai-sdk/tui": "^1.0.16",
     "@openrouter/ai-sdk-provider": "^2.10.0",
-    "@opentui/core": "^0.4.2",
     "ai": "^7.0.9",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

@@ -1,13 +1,17 @@
 #!/usr/bin/env node
-import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+
+const [major] = process.versions.node.split(".").map(Number);
+if (major < 18) {
+  console.error(`terra-orbit requires Node.js >= 18 (current: ${process.version})`);
+  process.exit(1);
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dist = join(__dirname, "..", "dist", "index.js");
 
-const result = spawnSync("bun", ["run", dist, ...process.argv.slice(2)], {
-  stdio: "inherit",
+import(dist).catch((err) => {
+  console.error("Failed to start terra-orbit:", err?.message ?? err);
+  process.exit(1);
 });
-
-process.exit(result.status ?? 1);

@@ -19,7 +19,7 @@ import { NasaClient, NasaApiError, RateLimitError } from "../nasa";
 import { terra } from "../harness/agent";
 
 
-const nasa = new NasaClient(Bun.env.NASA_API_KEY!);
+const nasa = new NasaClient(process.env.NASA_API_KEY!);
 const renderer = await createCliRenderer({
     exitOnCtrlC: true,
     screenMode: "split-footer",

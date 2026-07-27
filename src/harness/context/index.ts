@@ -1,7 +1,11 @@
-import { file } from "bun";
+import { readFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
 
-const terra = await file(new URL("./TERRA.txt", import.meta.url)).text();
-const base = await file(new URL("./BASE.txt", import.meta.url)).text();
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+const terra = await readFile(resolve(__dirname, "TERRA.txt"), "utf-8");
+const base = await readFile(resolve(__dirname, "BASE.txt"), "utf-8");
 
 export const context = {
     terra,

@@ -19,11 +19,11 @@
 
 ## Quick Start
 
-**Requires:** Bun ([install](https://bun.sh)) or Node.js ([install](https://nodejs.org/en/download))
+**Requires:** Bun ([install](https://bun.sh)) or Node.js 18+ ([install](https://nodejs.org/en/download))
 
 ```bash
 # Install with Bun
-bun add terra-orbit
+bun add -g terra-orbit
 
 # Install with Node.js
 npm i -g terra-orbit
@@ -38,8 +38,12 @@ bunx terra-orbit --web   # Web UI
 bunx terra-orbit --tui   # Terminal UI
 
 # Launch with Node.js
-terra-orbit --web    # Web UI
-terra-orbit --tui    # Terminal UI
+npx terra-orbit --web    # Web UI
+npx terra-orbit --tui    # Terminal UI
+
+# Launch if it is installed globally
+terra-orbit --web        # Web UI
+terra-orbit --tui        # Terminal UI
 ```
 
 ## Features

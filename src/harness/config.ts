@@ -2,9 +2,9 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { NasaClient } from "../nasa";
 import { homedir } from "os";
 import { join } from "path";
+import { readFile } from "node:fs/promises";
 
 const configPath = join(homedir(), ".config", "terra-orbit", "config.json");
-const configFile = Bun.file(configPath);
 
 interface AppConfig {
     [key: string]: string | undefined;
@@ -13,15 +13,16 @@ interface AppConfig {
 let config: AppConfig = {};
 
 try {
-    if (await configFile.exists()) {
-        config = await configFile.json() as AppConfig;
-    }
+    const content = await readFile(configPath, "utf-8");
+    config = JSON.parse(content) as AppConfig;
 } catch (error) {
-    console.warn(`Warning: Failed to parse config file at ${configPath}. Using defaults.`, error);
+    if ((error as NodeJS.ErrnoException)?.code !== "ENOENT") {
+        console.warn(`Warning: Failed to parse config file at ${configPath}. Using defaults.`, error);
+    }
 }
 
 function get(key: string): string | undefined {
-    return config[key] ?? Bun.env[key];
+    return config[key] ?? process.env[key];
 }
 
 export const hackclub = createOpenRouter({
